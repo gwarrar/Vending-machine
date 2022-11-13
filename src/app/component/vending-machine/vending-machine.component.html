@@ -1,0 +1,46 @@
+<div class="flex align-items-center justify-content-center min-h-screen min-w-screen"  style="position: fixed; overflow: hidden;" >
+  <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
+    <div class="col-12 xl:col-8"
+          style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+          <div class="h-full w-full m-0 py-7 px-4"
+              style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
+              <div class="text-center mb-5">
+                  <div class="text-900 text-3xl font-medium mb-3">Vending Machine</div>
+                  <div class="text-800 text-3xl font-medium text-primary" style="border-radius:56px; padding:0.3rem; background: rgb(223, 223, 223)">{{screenMessage}}</div>
+                  </div>
+            <div class="grid">
+              <div class="col-8">
+                <div class="grid" *ngIf="showProduct">
+                  <div class="col-4"  *ngFor="let product of products; let i = index; " >
+                    <img alt="Card" src="assets/images/item{{product.number}}.jpg" style="height:150px; width: 150px; cursor:pointer;" (click)="selectItem(product)">
+                    <p appCurrency="product.price">N:{{product.id}}<br> <strong class="bg-green-100"> {{product.price | currency : product.price < 1 ? 'cts':'EUR'}} </strong> - {{product.avilableQuantity}} Item Left</p>
+                  </div>
+                </div>
+                <p-button  *ngIf="!showProduct" label="SHOW" (click)="showProduct= true"></p-button>
+
+              </div>
+              <div class="col-4">
+                <div class="card-container overflow-hidden align-content-end">
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.05 , 'cts')" style="cursor:pointer" >5 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.10, 'cts')" style="cursor:pointer">10 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.20, 'cts')" style="cursor:pointer">20 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.50, 'cts')" style="cursor:pointer">50 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(1, 'EUR')" style="cursor:pointer">1 Euro</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(2, 'EUR')" style="cursor:pointer">2 Euro</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.01, 'cts')" style="cursor:pointer">1 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.02, 'cts')" style="cursor:pointer">2 Cent</label>
+                    <label for="money" class="block text-900 text-xl font-medium mb-2" (click)="setMoney(0.01, 'dollar')" style="cursor:pointer">1 $</label>
+
+                </div>
+                <!-- <label for="itemNumber" class="block text-900 text-xl font-medium mb-2"> Item number </label>
+                <p-inputNumber id="itemnumber" [(ngModel)]="itemNumber"  [min]="0" [max]="3" class="mb-3 p-1"></p-inputNumber>-->
+                <p-button  label="RETURN COINS" class="w-full p-3 text-xl w-2" (click)="returnMoney()" [disabled]="deactivateReturnButton"></p-button>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+
