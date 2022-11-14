@@ -1,0 +1,14 @@
+{
+  "VENDING_MACHINE": "Verkaufsautomat",
+  "GREETING_MESSAGE": "Hallo was möchtest du bestellen",
+  "TAKE_CHANGE": "Bitte nehmen Sie Ihr Wechselgeld :",
+  "THANK_YOU": "DANKE",
+  "INSERT_ENOUGH_MONEY": "Bitte genügend Geld einwerfen",
+  "SOLD_OUT_MESSAGE": "AUSVERKAUFT : Entschuldigung Dieses Produkt ist derzeit nicht verfügbar , bitte wählen Sie ein anderes Produkt",
+  "INVALID_COIN": "Ungültige 1 und 2 Cent werden nicht akzeptiert",
+  "INVALID_CURRENCY": "Ungültige Währung bitte verwenden Sie Euro",
+  "RETURNED_MONEY": "Geld zurückgegeben",
+  "INSERT_COIN": "MÜNZE EINWERFEN'",
+  "TRANSLATION-ERROR": "ÜBERSETZUNGSFEHLER",
+  "SHOW": "Show"
+}

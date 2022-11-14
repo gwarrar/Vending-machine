@@ -18,7 +18,7 @@ export class VendingMachineComponent implements OnInit {
   public showProduct: boolean = false;
   public products: Product[];
   public coins: Coin[];
-  public screenMessage: string = 'Hi what would you like to order';
+  public screenMessage: string  ;
   public deactivateReturnButton: boolean = true;
 
   constructor(
@@ -28,16 +28,17 @@ export class VendingMachineComponent implements OnInit {
     private sessionStorageService: SessionStorageService,
     private coinService: CoinService,
     private decimalPipe: DecimalPipe,
-    private translate: TranslateService
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
     this.setStartMessage();
     this.products = this.getItemFromStorage('Products');
     this.coins = this.getItemFromStorage('coins');
+    this.translate('GREETING_MESSAGE')
 
-    this.translate.onLangChange.subscribe((_event: LangChangeEvent) => {
-
+    this.translateService.onLangChange.subscribe((_event: LangChangeEvent) => {
+      this.screenMessage = this.translate('GREETING_MESSAGE');
   });
   }
 
@@ -50,21 +51,21 @@ export class VendingMachineComponent implements OnInit {
         this.products = this.getItemFromStorage('Products');
         if (returnedAmount != 0) {
           // this.giveChange(returnedAmount);
-          this.screenMessage = this.translate.instant("please take your change :")  + this.transformCurrency(this.totalMoneyAmount);
+          this.screenMessage = this.translate("TAKE_CHANGE")  + this.transformCurrency(this.totalMoneyAmount);
           setTimeout(() => {
-            this.screenMessage = 'THANK YOU'
+            this.screenMessage = this.translate('THANK_YOU');
           }, 4000);
         } else {
-          this.screenMessage = "THANK YOU";
+          this.screenMessage = this.translate('THANK_YOU');
         }
         this.deactivateReturnButton = true;
         this.totalMoneyAmount = 0;
 
       } else {
-        this.showMessage('warn', 'Insert enough money Pleas')
+        this.showMessage('warn', this.translate('INSERT_ENOUGH_MONEY'))
       }
     } else {
-      this.showMessage('warn', 'SOLD OUT : Sorry This product is not available currently , please choose Another Product')
+      this.showMessage('warn', this.translate('SOLD_OUT_MESSAGE'))
     }
   }
 
@@ -74,14 +75,13 @@ export class VendingMachineComponent implements OnInit {
         this.deactivateReturnButton = false;
         this.coinService.addCoin(this.difinedCoin(coinValue, currencyCode));
         this.coins = this.getItemFromStorage('coins');
-        this.sessionStorageService
         this.totalMoneyAmount = this.totalMoneyAmount + coinValue;
         this.screenMessage = 'Amount entered: ' + this.transformCurrency(this.totalMoneyAmount);
       } else {
-        this.showMessage('error', 'Invalid ones', '1 and 2 Cent not accepted');
+        this.showMessage('error', this.translate('INVALID_COIN'));
       }
     } else {
-      this.showMessage('error', 'Invalid currency', 'please use Euro');
+      this.showMessage('error',this.translate('INVALID_CURRENCY'));
     }
   }
 
@@ -95,7 +95,7 @@ export class VendingMachineComponent implements OnInit {
   }
 
   public returnMoney() {
-    this.screenMessage = 'Returned money ' + this.transformCurrency(this.totalMoneyAmount);
+    this.screenMessage = this.translate('RETURNED_MONEY') + this.transformCurrency(this.totalMoneyAmount);
     this.coinService.subtractLastCoin();
     this.deactivateReturnButton = true;
     setTimeout(() => {
@@ -129,10 +129,10 @@ export class VendingMachineComponent implements OnInit {
   private setStartMessage() {
     setInterval(() => {
       if (this.totalMoneyAmount == 0) {
-        this.screenMessage = 'Hi what would you like to order';
+        this.screenMessage = this.translate('GREETING_MESSAGE');
         setTimeout(() => {
           if (this.totalMoneyAmount == 0)
-            this.screenMessage = 'INSERT COIN';
+            this.screenMessage = this.translate('INSERT_COIN');
         }, 4000);
       }
     }, 8000);
@@ -144,6 +144,12 @@ export class VendingMachineComponent implements OnInit {
   }
 
   public changeLanguage(langCode: string){
-      this.translate.use(langCode);
+      this.translateService.use(langCode);
+  }
+
+  public translate(param: string): string {
+    let value: string = this.translate('TRANSLATION-ERROR');
+    this.translateService.get(param).subscribe(translation => value = translation);
+    return value;
   }
 }

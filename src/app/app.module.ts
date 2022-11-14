@@ -1,5 +1,4 @@
-import { lastValueFrom } from 'rxjs';
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -7,7 +6,7 @@ import { AppComponent } from './app.component';
 
 import { AccordionModule } from 'primeng/accordion'; //accordion and accordion tab
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StyleClassModule } from 'primeng/styleclass';
@@ -91,29 +90,31 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import { TreeTableModule } from 'primeng/treetable';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { VendingMachineComponent } from './component/vending-machine/vending-machine.component';
-import { MessageService } from 'primeng/api';
-import { CurrencyPipe } from '@angular/common';
-import { DecimalPipe } from '@angular/common';
-
-
-import { registerLocaleData } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
-import {TranslateLoader,TranslateModule,TranslateService} from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MessageService } from 'primeng/api';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { VendingMachineComponent } from './component/vending-machine/vending-machine.component';
 
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
-export function initializeAppTranslate(translate: TranslateService) {
-  //later came the default language Value from the user object prefer language;
-  const browserLang: string = translate.getBrowserLang();
-  if (browserLang && browserLang.match(/en|fr|de/)) {
-    return (): Promise<unknown> =>
-      lastValueFrom(translate.use(browserLang));
-  }
-  return (): Promise<unknown> => lastValueFrom(translate.use('de'));
+// export function initializeAppTranslate(translate: TranslateService) {
+//   //later came the default language Value from the user object prefer language;
+//   const browserLang: string = translate.getBrowserLang();
+//   if (browserLang && browserLang.match(/en|fr|de/)) {
+//     return (): Promise<unknown> =>
+//       lastValueFrom(translate.use(browserLang));
+//   }
+//   return (): Promise<unknown> => lastValueFrom(translate.use('de'));
+// }
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient): TranslateHttpLoader  {
+  return new TranslateHttpLoader(httpClient, './../assets/i18n/', '.json');
 }
 
 
@@ -209,7 +210,13 @@ export function initializeAppTranslate(translate: TranslateService) {
     TreeTableModule,
     VirtualScrollerModule,
     DynamicDialogModule,
-    TranslateModule.forRoot()
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
 
   ],
   providers: [
@@ -219,13 +226,14 @@ export function initializeAppTranslate(translate: TranslateService) {
     {
       provide: LOCALE_ID,
       useValue: 'de-DE'
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeAppTranslate,
-      deps: [TranslateService],
-      multi: true,
-    },
+    }
+    // ,
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: initializeAppTranslate,
+    //   deps: [TranslateService],
+    //   multi: true,
+    // },
   ],
   bootstrap: [AppComponent]
 })

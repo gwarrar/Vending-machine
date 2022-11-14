@@ -1,0 +1,14 @@
+{
+  "VENDING_MACHINE": "Distributeur automatique",
+  "GREETING_MESSAGE": "Bonjour, que souhaitez-vous commander",
+  "TAKE_CHANGE": "Merci de prendre votre monnaie :",
+  "THANK_YOU": "MERCI",
+  "INSERT_ENOUGH_MONEY": "Insérez assez d'argent S'il vous plaît",
+  "SOLD_OUT_MESSAGE": "ÉPUISÉ : Désolé, ce produit n'est pas disponible actuellement, veuillez choisir un autre produit",
+  "INVALID_COIN": "Invalides 1 et 2 Cent non acceptés",
+  "INVALID_CURRENCY": "Devise non valide, veuillez utiliser l'euro",
+  "RETURNED_MONEY": "Argent retourné",
+  "INSERT_COIN": "INSÉRER UNE PIÈCE'",
+  "TRANSLATION-ERROR": "ERREUR DE TRADUCTION",
+  "SHOW": "Afficher"
+}
