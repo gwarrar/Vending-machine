@@ -1,4 +1,5 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -100,8 +101,21 @@ import { DecimalPipe } from '@angular/common';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
+import {TranslateLoader,TranslateModule,TranslateService} from '@ngx-translate/core';
+
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
+
+export function initializeAppTranslate(translate: TranslateService) {
+  //later came the default language Value from the user object prefer language;
+  const browserLang: string = translate.getBrowserLang();
+  if (browserLang && browserLang.match(/en|fr|de/)) {
+    return (): Promise<unknown> =>
+      lastValueFrom(translate.use(browserLang));
+  }
+  return (): Promise<unknown> => lastValueFrom(translate.use('de'));
+}
+
 
 @NgModule({
   declarations: [
@@ -195,6 +209,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TreeTableModule,
     VirtualScrollerModule,
     DynamicDialogModule,
+    TranslateModule.forRoot()
+
   ],
   providers: [
     MessageService,
@@ -203,6 +219,12 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     {
       provide: LOCALE_ID,
       useValue: 'de-DE'
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAppTranslate,
+      deps: [TranslateService],
+      multi: true,
     },
   ],
   bootstrap: [AppComponent]

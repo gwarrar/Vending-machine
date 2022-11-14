@@ -21,73 +21,67 @@ export class CoinService {
   }
 
   public updatCoin(coins: Coin[]) {
-    this.sessionStorageService.updateItem('coins', coins)
+    this.updateIteminStorage('coins', coins)
   }
 
   public addCoin(coin: Coin) {
-    let coins: Coin[] = this.sessionStorageService.getItem('coins');
+    let coins: Coin[] = this.getItemFromStorage('coins');
     coins.push(coin);
     // this.sessionStorageService.deleteItem('coins');
-    this.sessionStorageService.updateItem('coins', coins);
+    this.updateIteminStorage('coins', coins);
   }
 
   public subtractLastCoin() {
-    let coins: Coin[] = this.sessionStorageService.getItem('coins');
+    let coins: Coin[] = this.getItemFromStorage('coins');
     coins.pop();
+    this.updateIteminStorage('coins', coins);
+  }
+
+  deleteCoinbyId(coin: Coin){
+    let coins: Coin[] = this.getItemFromStorage('coins');
+    coins.filter(item => item.id !== coin.id);
     this.sessionStorageService.updateItem('coins', coins);
   }
 
+  // deleteCoinbyValue(coin: Coin){
+  //   let coins: Coin[] = this.getItemFromStorage('coins');
+  //   coins.filter(item => item.vlaue !== coin.vlaue);
+  //   this.sessionStorageService.updateItem('coins', coins);
+  // }
+
   public countCoins(coinCode: string, coinValue: number) {
-    let coins: Coin[] = this.sessionStorageService.getItem('coins');
+    let coins: Coin[] = this.getItemFromStorage('coins');
     return coins.filter(coin => coin.code == coinCode && coin.vlaue == coinValue).length;
   }
 
-  public coinCountCollect(code: string, value: number) {
+  private coinCountCollect(code: string, value: number)
+  {
     // let coinsCounter : Coinslist[];
-    let newCoinCount: Coinslist;
+    let newCoinCount: Coinslist = new Coinslist() ;
     newCoinCount.count = this.countCoins(code, value);
     newCoinCount.code = code;
     newCoinCount.value = value;
     this.coinsCounter.push(newCoinCount);
+
   }
 
-  public coinsCollector() {
-    // let coinsCounter : Coinslist[];
-    // let fifCents: Coinslist;
-    // let tenCents:Coinslist;
-    // let twintyCents:Coinslist;
-    // let fiftyCents:Coinslist;
-    // let oneEuro:Coinslist;
-    // let towEuro:Coinslist;
-
-    // fiftyCents.code = 'cts'
-
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
-    // fiftyCents.code = 'cts'
-    // fiftyCents.count = this.countCoins('cts', 0.50)
-    // coinsCounter.push(fiftyCents);
+  public  coinsCollector() {
     this.coinCountCollect('cts', 0.05);
     this.coinCountCollect('cts', 0.10);
     this.coinCountCollect('cts', 0.20);
     this.coinCountCollect('cts', 0.50);
     this.coinCountCollect('EUR', 1);
     this.coinCountCollect('EUR', 2);
+    return this.coinsCounter;
   }
+
+  private getItemFromStorage(key: string) {
+    return this.sessionStorageService.getItem(key);
+  }
+
+  private updateIteminStorage(key:string, coins: Coin[]){
+    this.sessionStorageService.updateItem('coins', coins);
+  }
+
 
 }

@@ -6,6 +6,7 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
 import { Coin } from 'src/app/models/coin';
 import { CoinService } from 'src/app/services/coin.service';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-vending-machine',
@@ -26,13 +27,18 @@ export class VendingMachineComponent implements OnInit {
     private CurrencyPipe: CurrencyPipe,
     private sessionStorageService: SessionStorageService,
     private coinService: CoinService,
-    private decimalPipe: DecimalPipe
+    private decimalPipe: DecimalPipe,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
     this.setStartMessage();
-    this.products = this.sessionStorageService.getItem('Products');
-    this.coins = this.sessionStorageService.getItem('coins');
+    this.products = this.getItemFromStorage('Products');
+    this.coins = this.getItemFromStorage('coins');
+
+    this.translate.onLangChange.subscribe((_event: LangChangeEvent) => {
+
+  });
   }
 
   public selectItem(product: Product) {
@@ -41,10 +47,10 @@ export class VendingMachineComponent implements OnInit {
         this.totalMoneyAmount = this.totalMoneyAmount - product.price;
         let returnedAmount: number = this.totalMoneyAmount;
         this.productsService.updateProductQuantity(product.id, 1);
-        this.products = this.sessionStorageService.getItem('Products');
+        this.products = this.getItemFromStorage('Products');
         if (returnedAmount != 0) {
-          this.products
-          this.screenMessage = "please take your change :" + this.transformCurrency(this.totalMoneyAmount);
+          // this.giveChange(returnedAmount);
+          this.screenMessage = this.translate.instant("please take your change :")  + this.transformCurrency(this.totalMoneyAmount);
           setTimeout(() => {
             this.screenMessage = 'THANK YOU'
           }, 4000);
@@ -67,7 +73,7 @@ export class VendingMachineComponent implements OnInit {
       if (coinValue * 100 % 5 == 0) {
         this.deactivateReturnButton = false;
         this.coinService.addCoin(this.difinedCoin(coinValue, currencyCode));
-        this.coins = this.sessionStorageService.getItem('coins');
+        this.coins = this.getItemFromStorage('coins');
         this.sessionStorageService
         this.totalMoneyAmount = this.totalMoneyAmount + coinValue;
         this.screenMessage = 'Amount entered: ' + this.transformCurrency(this.totalMoneyAmount);
@@ -98,17 +104,27 @@ export class VendingMachineComponent implements OnInit {
 
   }
 
+  // giveChange(returnedAmount: number){
+  //   let coins: Coin[] = this.getItemFromStorage('coins');
+  //   let coinsCollect = this.coinService.coinsCollector();
+
+  //   coins.forEach(coin => {
+  //     if(coin.vlaue == returnedAmount){
+  //         this.coinService.deleteCoinbyValue(coin);
+  //     }
+  //   });
+  // }
+
+  private getItemFromStorage(key: string) {
+    return this.sessionStorageService.getItem(key);
+  }
+
   public showMessage(severityType: string, summaryMessage: string, messageDetail?: string) {
     this.messageService.add({ severity: severityType, summary: summaryMessage, detail: messageDetail });
     setTimeout(() => {
       this.messageService.clear();
     }, 5000);
   }
-
-  // private getAllProduct() {
-  //   // return JSON.parse(sessionStorage.getItem('Products'));
-  //   return this.sessionStorageService.getItem('Products');
-  // }
 
   private setStartMessage() {
     setInterval(() => {
@@ -125,5 +141,9 @@ export class VendingMachineComponent implements OnInit {
   private transformCurrency(currencyAmount: number, currencyCode: string = 'EUR'): string {
     if (currencyAmount < 1) currencyCode = 'cts'
     return this.CurrencyPipe.transform(currencyAmount, currencyCode, true);
+  }
+
+  public changeLanguage(langCode: string){
+      this.translate.use(langCode);
   }
 }
